@@ -41,15 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LIVATSARAFIDY/pomodoro.git"
-  },
-  "author": "LIVATSARAFIDY Pierre Thomas",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/LIVATSARAFIDY/pomodoro/issues"
-  },
-  "homepage": "https://github.com/LIVATSARAFIDY/pomodoro#readme"
+  }
 }
