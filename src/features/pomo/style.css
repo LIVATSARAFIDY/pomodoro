@@ -1,0 +1,50 @@
+
+.pomo-container{
+    width: 50%;
+    margin: auto;
+    height:auto
+}
+.pomoTimer{
+    border-radius: 3%;
+    height:auto; width:75%; margin:auto;background-color:#c15c5c;
+    padding: 15px 0px
+}
+.pomo-menu-item{
+    margin:20px
+}
+.btn-menu-actif{
+    background-color: #a44e4e;
+    color: white;
+}
+.btnMenu{
+    border: none;
+    height: 40px;
+    width: auto;
+    border-radius: 4%;
+    font-weight: 900;
+    padding: 0px 20px
+}
+.btnAction{
+    border: none;
+    background-color: white;
+    color: #ba4949;
+    margin: 2px;
+    cursor: pointer;
+    /* width: 10em;
+    height: 5em */
+}
+.btnAction:active{
+    transform: translateY(-5%);
+}
+.timer{
+    color: white;
+    font-size: 10em;
+    font-weight: 700
+}
+.alignToCenter {
+    text-align:center
+}
+.recap-session{
+    color: white;
+    margin:10px 0px;
+}

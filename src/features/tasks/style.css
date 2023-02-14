@@ -1,0 +1,96 @@
+.container-task{
+    width: 50%;
+    margin: 10px auto;
+    color: white
+}
+
+.block-title{
+    height: auto;
+    width: 75%;
+    margin: auto;
+    padding: 15px 2px;
+    border: 2px solid;
+}
+.btn-add-task:hover{
+    background-color: #cd4040;
+}
+.btn-add-task{
+    height: auto;
+    width: 75%;
+    margin: auto;
+    padding: 15px 2px;
+    text-align: center;
+    border: 2px dashed;
+    cursor: pointer;
+}
+.text-add-task{
+    position: relative;
+    top: -14px;
+}
+.form-add-task{
+    height: auto;
+    width: 76%;
+    margin: auto;
+    background-color: white;
+    color: black;
+    text-align: center;
+}
+
+input[name=newTask], input[name=updateTask]{
+    outline: none;
+    width: 97%;
+    height: 40px;
+    font-size: 30px;
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    font-family: cursive;
+}
+.footer-form{
+    width: 100%;
+    height: 37px;
+    padding-top: 14px;
+    background-color: #9a9a9a40;
+    margin-top: 10px;
+}
+.btn-action-form{
+    width: 7em;
+    height: 2em;
+    border-radius: 6px;
+    background-color: #312b2bb8;
+    border: 2px solid #312b2bb8;
+    color: white;
+    margin: 3px;
+}
+
+.list-task , .form-modif-task-item{
+    height: auto;
+    width: 76%;
+    margin: 2px auto;
+    background-color: white;
+    color: black;
+}
+.task-active{
+    border-left: 3px solid black;
+}
+.btn-action-item-task{
+    position: relative;
+    top: 4px;
+    float: right;
+    right: 7px;
+}
+.form-update-task{
+    margin-left: 10px;
+}
+
+textarea{
+    width: 97%;
+    margin-top: 12px;
+    font-family: fantasy;
+    text-align: center;
+}
+
+input[type=checkbox]{
+    position: relative;
+    top: 2px;
+}
