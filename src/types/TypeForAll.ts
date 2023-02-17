@@ -9,3 +9,15 @@ export type TypeTask = {
     note:string,
     status:boolean
 }
+
+export type TypeTheme = {
+    color:string,
+    color2:string,
+    color3:string,
+    num: number,
+   
+    focus:boolean,
+    shortBreak:boolean,
+    longBreak:boolean
+    
+}

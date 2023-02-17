@@ -1,0 +1,19 @@
+.container-footer{
+    width: 50%;
+    margin: 10px auto;
+    color: white
+}
+.block-recap{
+    height: auto;
+    width: 75%;
+    margin: 35px auto;
+    padding: 15px 2px;
+    border-top: 2px solid;
+    background-color: #c15c5c;
+    text-align: center;
+}
+.nb-pomo{
+    font-size: 1.2em;
+    font-weight: 900;
+    font-family: revert;
+}

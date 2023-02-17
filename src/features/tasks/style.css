@@ -12,7 +12,7 @@
     border: 2px solid;
 }
 .btn-add-task:hover{
-    background-color: #cd4040;
+    /* background-color: #cd4040; */
 }
 .btn-add-task{
     height: auto;

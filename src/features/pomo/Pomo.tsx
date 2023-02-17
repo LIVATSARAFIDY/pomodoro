@@ -1,7 +1,7 @@
 import React,{ useState, useEffect, useRef, useReducer, FunctionComponent } from "react";
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clearListTask, updateOneTask } from "../tasks/TaskSlice";
-import { TypeTask } from "../../types/TypeForAll";
+import { TypeTask,TypeTheme } from "../../types/TypeForAll";
 
 import './style.css'
 
@@ -12,16 +12,20 @@ type TypeTime = {
 }
 
 const Pomo:FunctionComponent = () => {
+    const typeTimerActif = useAppSelector(state => state.timerActif )
     const [timerForFocusIsEnd,setTimerForFocusIsEnd] = useState<boolean>(false)
     const [timerForBerakIsEnd,setTimerForBreakIsEnd] = useState<boolean>(false)
     const [session,setSession] = useState<number>(0)
     const [btnPlayPause,setBtnPlayPause] = useState<boolean>(false)
     const [cycle,setCycle] = useState<number>(0)
     const [textCurrentAction] = useState<any>({focus:'Time to focus!',shortBreak:'Time for a short break',longBreak:'Time for long break'})
-    const [typeTimeActif,setTypeTimeActif] = useState<string>('focus')
-    const {focus,shortBreak,longBreak} =  useAppSelector(state => state.pomo)
+    const [typeTimeActif,setTypeTimeActif] = useState<string>(typeTimerActif)
+    const focus =  useAppSelector(state => state.pomo.focus)
+    const shortBreak =  useAppSelector(state => state.pomo.shortBreak)
+    const longBreak =  useAppSelector(state => state.pomo.longBreak)
+    const settingsColor = useAppSelector(state => state.colorSettings)
     const tasks =  useAppSelector(state => state.task)
-    const [time,setTime] = useState<TypeTime>({focus:+focus,shortBreak:+shortBreak,longBreak:+longBreak})
+    const [time,setTime] = useState<TypeTime>({focus:0,shortBreak:0,longBreak:0})
     const intervalRef = useRef<ReturnType<typeof setInterval>|undefined>(undefined)
     const dispatch = useAppDispatch();
 
@@ -79,6 +83,8 @@ const Pomo:FunctionComponent = () => {
     
 
     useEffect(() => {
+
+        setTime({focus:focus,shortBreak:shortBreak,longBreak:longBreak})
         clearIntervalId()
         Notification.requestPermission();
         let taskActive:TypeTask = {...tasks.filter( task => task.active )[0]}
@@ -108,7 +114,21 @@ const Pomo:FunctionComponent = () => {
             pushNotification()
         }
         
-    },[btnPlayPause,timerForFocusIsEnd,timerForBerakIsEnd])
+        const divPomoTimer = Array.from(document.getElementsByClassName('pomoTimer') as HTMLCollectionOf<HTMLElement>)[0];
+        let themeFocus:TypeTheme;
+        if(typeTimeActif === 'focus'){
+            themeFocus = settingsColor.filter(theme => theme.focus === true )[0]   
+        }
+        else if(typeTimeActif === 'shortBreak'){
+            themeFocus = settingsColor.filter(theme => theme.shortBreak === true )[0]
+        }
+        else{
+            themeFocus = settingsColor.filter(theme => theme.longBreak === true )[0]
+        }
+        document.body.style.backgroundColor = themeFocus.color
+        divPomoTimer.style.backgroundColor = themeFocus.color2
+        
+    },[btnPlayPause,timerForFocusIsEnd,timerForBerakIsEnd,focus,shortBreak,longBreak,typeTimeActif])
 
     const btnUndo = () => {
         setTime({focus:+focus,shortBreak:+shortBreak,longBreak:+longBreak})
