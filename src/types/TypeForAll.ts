@@ -14,6 +14,7 @@ export type TypeTheme = {
     color:string,
     color2:string,
     color3:string,
+    color4:string,
     num: number,
    
     focus:boolean,

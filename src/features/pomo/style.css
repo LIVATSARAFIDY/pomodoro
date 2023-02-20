@@ -14,7 +14,7 @@
     margin:20px
 }
 .btn-menu-actif{
-    background-color: #a44e4e;
+    /* background-color: #a44e4e; */
     color: white;
 }
 .btnMenu{
@@ -23,7 +23,7 @@
     width: auto;
     border-radius: 4%;
     font-weight: 900;
-    padding: 0px 20px
+    padding: 0px 20px;
 }
 .btnAction{
     border: none;

@@ -7,11 +7,11 @@ import BtnAddTask from './features/tasks/BtnAddTask';
 import FormAddTask from './features/tasks/FormAddTask';
 import RecapPomo from './features/footer/RecapPomo';
 import Settings from './features/modalSettings/Settings';
-
 const App:React.FC = () => {
 
   const [showFormHideBtn,setShowForm] = useState<boolean>(false)
   const [showModalForSettings,setShowModalForSettings] = useState<boolean>(false)
+  useEffect( () => {},[showFormHideBtn])
   const toggleBtnOrForm = () => {
     setShowForm(!showFormHideBtn)
   }

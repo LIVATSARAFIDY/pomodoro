@@ -43,9 +43,9 @@ const Settings:FunctionComponent<TypeSettings> = ({desactiveModal}) => {
         dispatch(updateTimeToShortBreak(timeForShortBreak))
         dispatch(updateTimeToLongBreak(timeForLongBreak))
         window.localStorage.setItem('timer',JSON.stringify({focus:timeForFocus*60,shortBreak:timeForShortBreak*60,longBreak:timeForLongBreak*60}))
-        if(themeIsChanged){
-            document.body.style.backgroundColor = colorSettings[2].color2
-        }
+        // if(themeIsChanged){
+        //     document.body.style.backgroundColor = colorSettings[2].color2
+        // }
         setThemeIsChanged(false)
         desactiveModal()
     }
