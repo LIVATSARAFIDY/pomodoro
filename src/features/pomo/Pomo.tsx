@@ -2,6 +2,7 @@ import React,{ useState, useEffect, useRef, useReducer, FunctionComponent } from
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clearListTask, updateOneTask } from "../tasks/TaskSlice";
 import { changeTimerActif } from "../typeTimerActif/timerActifSlice";
+import { turnOffSettingsPomo } from "../modalSettings/SettingsSlice";
 import { TypeTask,TypeTheme } from "../../types/TypeForAll";
 
 import './style.css'
@@ -20,19 +21,19 @@ const Pomo:FunctionComponent = () => {
     const [btnPlayPause,setBtnPlayPause] = useState<boolean>(false)
     const [cycle,setCycle] = useState<number>(0)
     const [textCurrentAction] = useState<any>({focus:'Time to focus!',shortBreak:'Time for a short break',longBreak:'Time for long break'})
-    const [typeTimeActif,setTypeTimeActif] = useState<string>(typeTimerActif)
     const focus =  useAppSelector(state => state.pomo.focus)
     const shortBreak =  useAppSelector(state => state.pomo.shortBreak)
     const longBreak =  useAppSelector(state => state.pomo.longBreak)
+    const checkIfPomoIsSettings = useAppSelector(state => state.settings)
     const settingsColor = useAppSelector(state => state.colorSettings)
     const tasks =  useAppSelector(state => state.task)
-    const [time,setTime] = useState<TypeTime>({focus:0,shortBreak:0,longBreak:0})
+    // const [time,setTime] = useState<TypeTime>({focus:0,shortBreak:0,longBreak:0})
+    const [time,setTime] = useState<TypeTime>({focus,shortBreak,longBreak})
     const intervalRef = useRef<ReturnType<typeof setInterval>|undefined>(undefined)
     const dispatch = useAppDispatch();
 
     const pushNotification = () => {
-        // const text = (typeTimeActif === 'focus') ? "Time to focus" : (typeTimeActif === 'shortBreak' ? "Time to take short break" : "Time to take long break")
-        const text = (typeTimerActif === 'focus') ? "Time to focus" : (typeTimeActif === 'shortBreak' ? "Time to take short break" : "Time to take long break")
+        const text = (typeTimerActif === 'focus') ? "Time to focus" : (typeTimerActif === 'shortBreak' ? "Time to take short break" : "Time to take long break")
         new Notification(text)
     };
 
@@ -52,27 +53,18 @@ const Pomo:FunctionComponent = () => {
                         setCycle(nbCycle+1)
                         setTimerForFocusIsEnd(true)
                         setBtnPlayPause(!btnPlayPause)
-                        if(cycle < 3){
-                            setTypeTimeActif('shortBreak')
-                            dispatch(changeTimerActif('shortBreak'))
-                        }
-                        else{
+                        if(cycle > 3){
                             setCycle(0)
-                            setTypeTimeActif('longBreak')
-                            dispatch(changeTimerActif('longBreak'))
+                            
                         }
                     }
                     else if(action.typeTime === 'shortBreak'){
                         setBtnPlayPause(!btnPlayPause)
                         tempTime = {focus:+focus,shortBreak:+shortBreak,longBreak:+longBreak}
-                        setTypeTimeActif('focus')
-                        dispatch(changeTimerActif('focus'))
                         setTimerForBreakIsEnd(true)
                     }
                     else if(action.typeTime === 'longBreak'){
                         setBtnPlayPause(!btnPlayPause)
-                        setTypeTimeActif('focus')
-                        dispatch(changeTimerActif('focus'))
                         setTimerForBreakIsEnd(true)
                     }
                 }
@@ -90,8 +82,10 @@ const Pomo:FunctionComponent = () => {
     
 
     useEffect(() => {
-
-        setTime({focus:focus,shortBreak:shortBreak,longBreak:longBreak})
+        if(checkIfPomoIsSettings){
+            setTime({focus:focus,shortBreak:shortBreak,longBreak:longBreak})
+            dispatch(turnOffSettingsPomo(false))
+        }
         clearIntervalId()
         Notification.requestPermission();
         let taskActive:TypeTask = {...tasks.filter( task => task.active )[0]}
@@ -105,32 +99,40 @@ const Pomo:FunctionComponent = () => {
         }
         if(btnPlayPause){
             const intervalId:ReturnType<typeof setInterval>|undefined = setInterval(() => { 
-                // dispatcher({typeAction:'tick',typeTime:typeTimeActif})
                 dispatcher({typeAction:'tick',typeTime:typeTimerActif})
             } , 1000)
             intervalRef.current = intervalId;
         }
-        if(timerForFocusIsEnd){
-            
-            if(Object.keys(taskActive).length > 0){
+        if(timerForFocusIsEnd ){
+            if(Object.keys(taskActive).length > 0 && typeTimerActif === 'focus'){
                 taskActive.nbPomoEffectif += 1
                 dispatch(updateOneTask(taskActive))
             }
-            pushNotification()
+            if(typeTimerActif !== "focus"){
+                pushNotification()
+            }
+            if(cycle <= 3){
+                dispatch(changeTimerActif('shortBreak'))
+            }
+            else{
+                dispatch(changeTimerActif('longBreak'))
+            }
+            
         }
         if(timerForBerakIsEnd){
-            pushNotification()
+            dispatch(changeTimerActif('focus'))
+            if(typeTimerActif === "focus"){
+                pushNotification()
+            }
         }
         
         const divPomoTimer = Array.from(document.getElementsByClassName('pomoTimer') as HTMLCollectionOf<HTMLElement>)[0];
         const btnMenu = Array.from(document.getElementsByClassName('btnMenu') as HTMLCollectionOf<HTMLElement>);
         const btnMenuActif = Array.from(document.getElementsByClassName('btn-menu-actif') as HTMLCollectionOf<HTMLElement>)[0];
         let themeActive:TypeTheme;
-        // if(typeTimeActif === 'focus'){
         if(typeTimerActif === 'focus'){
             themeActive = settingsColor.filter(theme => theme.focus === true )[0]   
         }
-        // else if(typeTimeActif === 'shortBreak'){
         else if(typeTimerActif === 'shortBreak'){
             themeActive = settingsColor.filter(theme => theme.shortBreak === true )[0]
         }
@@ -145,7 +147,7 @@ const Pomo:FunctionComponent = () => {
         btnMenuActif.style.backgroundColor = themeActive.color4
         
     // },[btnPlayPause,timerForFocusIsEnd,timerForBerakIsEnd,focus,shortBreak,longBreak,typeTimeActif])
-    },[btnPlayPause,timerForFocusIsEnd,timerForBerakIsEnd,focus,shortBreak,longBreak,typeTimerActif])
+    },[btnPlayPause,focus,shortBreak,longBreak,typeTimerActif])
 
     const btnUndo = () => {
         setTime({focus:+focus,shortBreak:+shortBreak,longBreak:+longBreak})
@@ -153,8 +155,9 @@ const Pomo:FunctionComponent = () => {
     }
     const onChangeTypeTimeActif = (type:string):void => {
         clearIntervalId()
-        setTypeTimeActif(type)
         dispatch(changeTimerActif(type))
+        setTimerForFocusIsEnd(false)
+        setTimerForBreakIsEnd(false)
         btnUndo()
     }
     const toogleBtnPlayPause = () => {
@@ -175,9 +178,9 @@ const Pomo:FunctionComponent = () => {
     const resetPomo = () => {
         window.localStorage.clear()
         setSession(0)
-        btnUndo()
+        setTime({focus:1500,shortBreak:300,longBreak:900})
+        setBtnPlayPause(false)
         dispatch(clearListTask())
-        setTypeTimeActif('focus')
         dispatch(changeTimerActif('focus'))
     }
     return (
@@ -185,21 +188,17 @@ const Pomo:FunctionComponent = () => {
             <div className="pomoTimer"  >
                 <div className="pomo-menu alignToCenter" >
                     <span className="pomo-menu-item" >
-                        {/* <button  className={`btnMenu ${ typeTimeActif === 'focus' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('focus')}>Focus</button> */}
                         <button  className={`btnMenu ${ typeTimerActif === 'focus' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('focus')}>Focus</button>
                     </span>
                     <span className="pomo-menu-item" >
-                        {/* <button className={`btnMenu ${ typeTimeActif === 'shortBreak' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('shortBreak')} >Short break</button> */}
                         <button className={`btnMenu ${ typeTimerActif === 'shortBreak' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('shortBreak')} >Short break</button>
                     </span>
                     <span className="pomo-menu-item" >
-                        {/* <button className={`btnMenu ${ typeTimeActif === 'longBreak' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('longBreak')} >Long break</button> */}
                         <button className={`btnMenu ${ typeTimerActif === 'longBreak' ? 'btn-menu-actif':'' } `} onClick={() => onChangeTypeTimeActif('longBreak')} >Long break</button>
                     </span>
                 </div>
                 <div className="timer alignToCenter">
                     {
-                        // typeTimeActif === 'focus' ? formatTimer(time.focus,'focus') : ( typeTimeActif === 'shortBreak' ? formatTimer(time.shortBreak,'shortBreak') : formatTimer(time.longBreak,'longBreak') )
                         typeTimerActif === 'focus' ? formatTimer(time.focus,'focus') : ( typeTimerActif === 'shortBreak' ? formatTimer(time.shortBreak,'shortBreak') : formatTimer(time.longBreak,'longBreak') )
                     }
                 </div>

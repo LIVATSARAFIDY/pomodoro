@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useRef, useEffect } from 'react'
+import { FunctionComponent, useState, useEffect } from 'react'
 import { useAppSelector } from '../../app/hooks'
 import { TypeTheme } from '../../types/TypeForAll'
 import './style.css'
@@ -11,11 +11,11 @@ const BtnAddTask:FunctionComponent<PropsBtn> = ({actionToggle}) => {
     const [hover, setHover] = useState<boolean>(false);
     const typeTimerActif = useAppSelector(state => state.timerActif )
     const settingsColor = useAppSelector(state => state.colorSettings)
+    const checkIfPomoIsSettings = useAppSelector(state => state.settings)
     const [colorHover,setColorHover] = useState<string>('')
     const [color,setColor] = useState<string>('')
     
     useEffect( () => {
-
         let themeFound:TypeTheme
         if(typeTimerActif === 'focus'){
             themeFound = settingsColor.filter(theme => theme.focus === true )[0]   
@@ -29,7 +29,7 @@ const BtnAddTask:FunctionComponent<PropsBtn> = ({actionToggle}) => {
         setColorHover(themeFound.color3)
         setColor(themeFound.color2)
         
-    },[typeTimerActif])
+    },[typeTimerActif,checkIfPomoIsSettings])
 
     const handleMouseEnter = () => {
         setHover(true);

@@ -5,17 +5,15 @@ import { TypeTheme } from '../../types/TypeForAll';
 import './styleCadreColor.css'
 
 type PropsCadreColor = {
-    type:string,
-    checkIfThemeChanged: () => void
+    type:string
 }
 
-const CadreColor:FunctionComponent<PropsCadreColor> = ({type,checkIfThemeChanged}) => {
+const CadreColor:FunctionComponent<PropsCadreColor> = ({type}) => {
     const themeCheckedIcon:ReactElement<HTMLImageElement> = <img style={{position: "relative",top: "-7px",left: "15px"}} src="/imgs/check-without-border.svg" alt="" />
     const paletteColorGlobal = useAppSelector<TypeTheme[]>( state => state.colorSettings )
     const dispatch = useAppDispatch()
     const [themes,setTheme] = useState<TypeTheme[]>(paletteColorGlobal)
     const clickPanelColor = (themeNum:number) =>{
-        checkIfThemeChanged()
         let temp = [...themes]
         temp = temp.map( theme => {
             let themeCopy = {...theme}

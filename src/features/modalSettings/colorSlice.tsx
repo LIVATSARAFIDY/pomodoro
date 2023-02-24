@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TypeTheme } from "../../types/TypeForAll";
 
+const colorSettingsLocalStorage = window.localStorage.getItem('settingsColor')
 
-const paletteColor:TypeTheme[] = [
+const paletteColor:TypeTheme[] = colorSettingsLocalStorage!== null ? JSON.parse(colorSettingsLocalStorage) as TypeTheme[] :  [
     {color:'#ba4949' ,color2:'#c15c5c', color3:'#cd4040', color4:'#a44e4e' , num:1, focus:true,shortBreak:false,longBreak:false},
     {color:'#397097',color2:'#3c97d8', color3:'#2a7eba', color4:'#19486a' ,num:2, focus:false,shortBreak:true,longBreak:false},
     {color:'#a4893c',color2:'#be9b37', color3:'#a8882c', color4:'#836a23' ,num:3, focus:false,shortBreak:false,longBreak:false},

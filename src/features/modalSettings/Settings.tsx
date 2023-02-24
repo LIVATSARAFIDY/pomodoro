@@ -2,39 +2,45 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CadreColor from './cadreColor';
 import { updateTimeToFocus, updateTimeToShortBreak, updateTimeToLongBreak } from '../pomo/PomoSlice';
+import { TypeTheme } from '../../types/TypeForAll';
 import './style.css'
+import { turnOneSettingsPomo } from './SettingsSlice';
 
 type TypeSettings = {
     desactiveModal: () => void
 }
 
+
 const Settings:FunctionComponent<TypeSettings> = ({desactiveModal}) => {
     const colorSettings = useAppSelector(state =>state.colorSettings)
     const {focus,shortBreak,longBreak} = useAppSelector( state => state.pomo )
+    const typeTimerActif = useAppSelector(state => state.timerActif )
     const [timeForFocus,setTemForFocus] = useState<number>(0)
     const [timeForShortBreak,setTemForShortBreak] = useState<number>(0)
     const [timeForLongBreak,setTemForLongBreak] = useState<number>(0)
-    const [themeIsChanged,setThemeIsChanged] = useState<boolean>(false)
     const dispatch = useAppDispatch()
     useEffect( () => {
-        setTemForFocus( Math.round(focus/60))
-        setTemForShortBreak( Math.round(shortBreak/60))
-        setTemForLongBreak( Math.round(longBreak/60))
+        Math.round(focus/60) > 0 ? setTemForFocus( Math.round(focus/60)) : setTemForFocus(1)
+        Math.round(shortBreak/60) ?  setTemForShortBreak( Math.round(shortBreak/60)) : setTemForShortBreak(1)
+        Math.round(longBreak/60) ? setTemForLongBreak( Math.round(longBreak/60)) : setTemForLongBreak(1)
     },[])
 
     const handleChange = (e:React.ChangeEvent<HTMLInputElement>,type:string):void => {
-        switch (type) {
-            case "focus":
-                setTemForFocus(+e.target.value)      
-                break;
-            case "shortBreak":
-                setTemForShortBreak(+e.target.value)      
-                break;
-            case "longBreak":
-                setTemForLongBreak(+e.target.value)      
-                break;
-            default:
-                break;
+        const value = +e.target.value
+        if(value>=1){
+            switch (type) {
+                case "focus":
+                    setTemForFocus(+e.target.value)      
+                    break;
+                case "shortBreak":
+                    setTemForShortBreak(+e.target.value)      
+                    break;
+                case "longBreak":
+                    setTemForLongBreak(+e.target.value)      
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -42,11 +48,30 @@ const Settings:FunctionComponent<TypeSettings> = ({desactiveModal}) => {
         dispatch(updateTimeToFocus(timeForFocus))
         dispatch(updateTimeToShortBreak(timeForShortBreak))
         dispatch(updateTimeToLongBreak(timeForLongBreak))
+        dispatch(turnOneSettingsPomo(true))
         window.localStorage.setItem('timer',JSON.stringify({focus:timeForFocus*60,shortBreak:timeForShortBreak*60,longBreak:timeForLongBreak*60}))
-        // if(themeIsChanged){
-        //     document.body.style.backgroundColor = colorSettings[2].color2
-        // }
-        setThemeIsChanged(false)
+
+        const divPomoTimer = Array.from(document.getElementsByClassName('pomoTimer') as HTMLCollectionOf<HTMLElement>)[0];
+        const btnMenu = Array.from(document.getElementsByClassName('btnMenu') as HTMLCollectionOf<HTMLElement>);
+        const btnMenuActif = Array.from(document.getElementsByClassName('btn-menu-actif') as HTMLCollectionOf<HTMLElement>)[0];
+        let themeActive:TypeTheme;
+        if(typeTimerActif === 'focus'){
+            themeActive = colorSettings.filter(theme => theme.focus === true )[0]   
+        }
+        else if(typeTimerActif === 'shortBreak'){
+            themeActive = colorSettings.filter(theme => theme.shortBreak === true )[0]
+        }
+        else{
+            themeActive = colorSettings.filter(theme => theme.longBreak === true )[0]
+        }
+        document.body.style.backgroundColor = themeActive.color
+        divPomoTimer.style.backgroundColor = themeActive.color2
+        btnMenu.forEach(box => {
+            box.style.backgroundColor = 'white'
+        });
+        btnMenuActif.style.backgroundColor = themeActive.color4
+        window.localStorage.setItem('settingsColor',JSON.stringify(colorSettings))
+
         desactiveModal()
     }
     return (
@@ -85,15 +110,15 @@ const Settings:FunctionComponent<TypeSettings> = ({desactiveModal}) => {
                         <br /><br />
                         <div className="content-theme" >
                             Pomodoro<br />
-                            <CadreColor type="pomodoro" checkIfThemeChanged={ () => setThemeIsChanged(true) } />
+                            <CadreColor type="pomodoro"  />
                         </div>
                         <div className="content-theme" >
                             Short break<br />
-                            <CadreColor type="shortBreak" checkIfThemeChanged={ () => setThemeIsChanged(true) } />
+                            <CadreColor type="shortBreak"  />
                         </div>
                         <div className="content-theme" >
                             Long break<br />
-                            <CadreColor type="longBreak" checkIfThemeChanged={ () => setThemeIsChanged(true)} />
+                            <CadreColor type="longBreak"  />
                         </div>
                     </div>
                 </div>
